@@ -7,13 +7,13 @@ export const VOTE_POST = 'VOTE_POST'
 export const CREATE_COMMENT = 'CREATE_COMMENT'
 export const VOTE_COMMENT = 'VOTE_COMMENT'
 export const DELETE_COMMENT = 'DELETE_COMMENT'
+export const GET_COMMENTS = 'GET_COMMENTS'
 
 const API = 'http://localhost:3001'
 
 export function getPostAction(post_id) {
   fetch(`${API}/posts/${post_id}` ,{ headers: { 'Authorization': 'whatever-you-want' } })
   .then((res) => {
-    console.log(res)
         return ( {
           type: GET_POST,
           post_id: post_id,
@@ -39,9 +39,6 @@ export function addPostsAction(posts) {
 }
 
 export function deletePostAction(post_id) {
-  console.log("delte action", post_id)
-  console.log(`${API}/posts/${post_id}`)
-
   return dispatch => {
      fetch(`${API}/posts/${post_id}`, {
        method: 'DELETE',
@@ -63,10 +60,6 @@ export function createPostAction(newpost) {
   }
 }
 
-export function fetchvote() {
-  console.log("fetch vote")
-}
-
 export function votePostAction(post_id, upordown) {
   return dispatch => {
      fetch(`${API}/posts/${post_id}`, {
@@ -83,6 +76,21 @@ export function votePostAction(post_id, upordown) {
   }
 }
 
+export function getPostCommentAction(post_id) {
+  console.log("get post comments" , post_id)
+  return dispatch => {
+    fetch(`${API}/posts/${post_id}/comments` ,{ headers: { 'Authorization': 'whatever-you-want' } })
+      .then((res) => res.json())
+       .then(data => {
+        dispatch({
+          type: GET_COMMENTS,
+          post_id: post_id,
+          comments: data
+        })
+      })
+    }
+}
+
 export function createCommentAction(post_id, name, comment) {
   return {
     type: CREATE_COMMENT,
@@ -92,11 +100,20 @@ export function createCommentAction(post_id, name, comment) {
   }
 }
 
-export function voteCommentAction(comment_id, score) {
-  return {
-    type: VOTE_COMMENT,
-    comment_id,
-    score
+export function voteCommentAction(comment_id, upordown) {
+  console.log("vote", `${API}/comments/${comment_id}`, upordown)
+  return dispatch => {
+     fetch(`${API}/comments/${comment_id}`, {
+       method: 'POST',
+       headers: { 'Authorization': 'whatever-you-want', "Content-Type": "application/json" },
+       body: JSON.stringify({option: upordown})
+     }).then((res) => res.json())
+      .then(data => {
+       dispatch({
+         type: VOTE_COMMENT,
+         comment: data,
+       })
+     })
   }
 }
 

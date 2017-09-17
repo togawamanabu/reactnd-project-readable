@@ -10,6 +10,7 @@ import {
   CREATE_COMMENT,
   VOTE_COMMENT,
   DELETE_COMMENT,
+  GET_COMMENTS,
   } from '../actions'
 
 function category (state = {categories:[]}, action) {
@@ -82,11 +83,35 @@ function post (state={posts:[]}, action) {
   }
 }
 
-function comment (state={comment:[]}, action) {
+function comment (state={comments:[]}, action) {
+  switch (action.type) {
+    case GET_COMMENTS:
+      console.log("comment", action)
+      return {
+        ...state,
+        comments: action.comments
+      }
+
+    case VOTE_COMMENT:
+      const voteupdatedcomments = state.comments.map((comment, index) => {
+        if(comment.id === action.comment.id) {
+          return action.comment
+        } else {
+          return comment
+        }
+      })
+
+      return {...state, comments: voteupdatedcomments}
+
+    default:
+      return state
+
+  }
   const { comment } = action
 }
 
 export default combineReducers({
   category,
   post,
+  comment,
 })

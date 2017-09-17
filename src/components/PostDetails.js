@@ -5,21 +5,22 @@ import PropTypes from 'prop-types'
 import { formatTimestamp } from '../utils/helpers'
 import CommentList from './CommentList'
 import AddComment from './AddComment'
-import { deletePostAction, votePostAction, getPostAction } from '../actions'
+import {
+  deletePostAction,
+  votePostAction,
+  getPostAction,
+  getPostCommentAction,
+ } from '../actions'
 
 class PostDetails extends Component {
   static propType =  {
     category: PropTypes.string.isRequired,
   }
 
-  state = {
-    comments:[],
-  }
-
   componentDidMount() {
     const { post_id } = this.props.match.params;
-    this.props.getPostAction(post_id);
-
+    this.props.getPostAction(post_id)
+    this.props.getPostCommentAction(post_id)
   }
 
   delete = (e) => {
@@ -72,9 +73,9 @@ class PostDetails extends Component {
           <button onClick={(e) => this.delete(e)}>delete</button>
         </div>
 
-        comments: { this.state.comments.length }
+        comments: { this.props.comments.length }
 
-        <CommentList comments={this.state.comments} />
+        <CommentList comments={this.props.comments} />
 
         <AddComment />
 
@@ -88,6 +89,7 @@ function mapStateToProps(state, props) {
     categories: state.category.categories,
     posts: state.post.posts,
     post: state.post.posts.filter( (p) => p.id === props.match.params.post_id)[0],
+    comments: state.comment.comments
   }
 }
 
@@ -96,6 +98,7 @@ function mapDispatchToProps(dispatch) {
     getPostAction: (post_id) => getPostAction(post_id),
     votePostAction: (post_id, upordown) => dispatch(votePostAction(post_id, upordown)),
     deletePostAction: (post_id) => dispatch(deletePostAction(post_id)),
+    getPostCommentAction: (post_id) => dispatch(getPostCommentAction(post_id)),
   }
 }
 

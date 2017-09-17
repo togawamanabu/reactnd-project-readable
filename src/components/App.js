@@ -31,8 +31,6 @@ class App extends Component {
   }
 
   componentDidMount() {
-    console.log("did mount")
-
     const { addCategories, addPosts } = this.props
 
     getCategories().then((categories) => {
@@ -78,9 +76,8 @@ class App extends Component {
 
         <Route exact path="/:category" render={({match}) => (
           <div>
-            <p>Category : {match.params.category}</p>
             <Header match={match} categories={categories} setOrderbyScore={this.setOrderbyScore} setOrderbyTimestamp={this.setOrderbyTimestamp} />
-
+            <p>Category : {match.params.category}</p>
             <div className="posts">
               <PostList posts={posts} category={match.params.category} />
             </div>
