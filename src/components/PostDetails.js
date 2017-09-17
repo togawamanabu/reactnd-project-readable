@@ -95,7 +95,7 @@ function mapDispatchToProps(dispatch) {
   return {
     getPostAction: (post_id) => getPostAction(post_id),
     votePostAction: (post_id, upordown) => dispatch(votePostAction(post_id, upordown)),
-    deltePostAction: (post_id) => deletePostAction(post_id),
+    deletePostAction: (post_id) => dispatch(deletePostAction(post_id)),
   }
 }
 

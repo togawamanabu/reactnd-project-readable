@@ -39,17 +39,20 @@ export function addPostsAction(posts) {
 }
 
 export function deletePostAction(post_id) {
+  console.log("delte action", post_id)
+  console.log(`${API}/posts/${post_id}`)
 
   return dispatch => {
-    fetch(`${API}/posts/${post_id}`, {
-      method: 'DELETE',
-      headers: { 'Authorization': 'whatever-you-want' },
-    }).then((res) => {
-      dispatch({
-        type: DELETE_POST,
-        post_id,
-      })
-    })
+     fetch(`${API}/posts/${post_id}`, {
+       method: 'DELETE',
+       headers: { 'Authorization': 'whatever-you-want', "Content-Type": "application/json" },
+     }).then((res) => res.json())
+      .then(data => {
+       dispatch({
+         type: DELETE_POST,
+         post: data,
+       })
+     })
   }
 }
 
@@ -70,10 +73,11 @@ export function votePostAction(post_id, upordown) {
        method: 'POST',
        headers: { 'Authorization': 'whatever-you-want', "Content-Type": "application/json" },
        body: JSON.stringify({option: upordown})
-     }).then((res) => {
+     }).then((res) => res.json())
+      .then(data => {
        dispatch({
          type: VOTE_POST,
-         post: res.json(),
+         post: data,
        })
      })
   }

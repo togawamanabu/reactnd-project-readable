@@ -41,10 +41,16 @@ function post (state={posts:[]}, action) {
       }
 
     case DELETE_POST:
-      return {
-        ...state,
-        [action.post_id]: {...state[action.post_id], deleted: true}
-      }
+      console.log("deleted")
+      const deletedposts = state.posts.map((post, index) => {
+        if(post.id === action.post.id) {
+          return action.post
+        } else {
+          return post
+        }
+      })
+
+      return {...state, posts: deletedposts}
 
     case CREATE_POST:
       return {
@@ -53,12 +59,22 @@ function post (state={posts:[]}, action) {
       }
 
     case VOTE_POST:
-      console.log("vote post reducer", action)
-      return {
-        ...state,
-        [action.post.id]: {...state[action.post.id], score: action.post.score}
-      }
+      const voteupdatedpost = state.posts.map((post, index) => {
+        if(post.id === action.post.id) {
+          return action.post
+        } else {
+          return post
+        }
+      })
 
+      // {...state,
+      //   posts: [
+      //     ...state.posts,
+      //     ...action.post
+      //   ]
+      // }
+
+      return {...state, posts: voteupdatedpost}
 
     default:
       return state
