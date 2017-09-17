@@ -8,12 +8,8 @@ export default function PostList ({posts, category=null}) {
   }
 
   if (category) {
-    posts = posts.filter((post) =>
-      post.category === category
-    )
+    posts = posts.filter(post => post.category === category)
   }
-
-
 
   return(
     <div className="postlist">

@@ -1,19 +1,38 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { Route, Link, withRouter } from 'react-router-dom'
+import Modal from 'react-modal'
 
 import { getCategories, getAllPosts } from '../utils/api'
 import { orderByScore, orderByTime } from '../utils/helpers'
-import { addCategories, addPosts } from '../actions'
+import { addCategoriesAction, addPostsAction } from '../actions'
 
 import PostList from './PostList'
 import Header from './Header'
 import PostDetails from './PostDetails'
+import AddPost from './AddPost'
 
 import '../App.css';
 
 class App extends Component {
+  state = {
+      newPostModalOpen: false,
+  }
+
+  openNewPostModal= () => {
+    this.setState(() => ({
+      newPostModalOpen: true,
+    }))
+  }
+  closeNewPostModal = () => {
+    this.setState(() => ({
+      newPostModalOpen: false,
+    }))
+  }
+
   componentDidMount() {
+    console.log("did mount")
+
     const { addCategories, addPosts } = this.props
 
     getCategories().then((categories) => {
@@ -40,7 +59,7 @@ class App extends Component {
     const { categories, posts} = this.props
 
     return (
-      <div className="App">
+      <div className='container'>
         <Route exact path="/" render={() => (
           <div>
             <Header categories={categories} setOrderbyScore={this.setOrderbyScore} setOrderbyTimestamp={this.setOrderbyTimestamp} />
@@ -50,18 +69,12 @@ class App extends Component {
             </div>
 
             <div className="addpost">
-              <Link to="addpost">Add Post</Link>
+              <button onClick={() => this.openNewPostModal()}>Add Post</button>
             </div>
           </div>
         )} />
 
-        <Route exact path="/:category/:post_id" render={({match}) => (
-          <div>
-            <Header categories={categories} showButton={false} />
-
-            <PostDetails category={match.params.category} post_id={match.params.post_id} />
-          </div>
-        )} />
+      <Route path="/:category/:post_id" component={PostDetails} />
 
         <Route exact path="/:category" render={({match}) => (
           <div>
@@ -73,6 +86,18 @@ class App extends Component {
             </div>
           </div>
         )} />
+
+        <Modal
+          className='modal'
+          overlayClassName='overlay'
+          isOpen={this.state.newPostModalOpen}
+          onRequestClose={this.closeNewPostModal}
+          contentLabel='Modal'
+        >
+          <div>
+            <AddPost categories={categories} closeModal={this.closeNewPostModal}/>
+          </div>
+        </Modal>
       </div>
     );
   }
@@ -81,14 +106,14 @@ class App extends Component {
 function mapStateToProps(state) {
   return {
     categories: state.category.categories,
-    posts: state.post.posts,
+    posts: state.post.posts.filter(p => !p.deleted),
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    addCategories: (data) => dispatch(addCategories(data)),
-    addPosts: (data) => dispatch(addPosts(data)),
+    addCategories: (data) => dispatch(addCategoriesAction(data)),
+    addPosts: (data) => dispatch(addPostsAction(data)),
   }
 }
 
