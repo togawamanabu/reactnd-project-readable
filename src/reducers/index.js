@@ -11,16 +11,16 @@ import {
   VOTE_COMMENT,
   DELETE_COMMENT,
   GET_COMMENTS,
+  GET_ALL_POST,
+  EDIT_POST,
   } from '../actions'
 
 function category (state = {categories:[]}, action) {
-  const { categories } = action
-
   switch (action.type) {
     case ADD_CATEGORIES:
       return {
         ...state,
-        categories:categories
+        categories:action.data.categories
       }
 
     default:
@@ -41,8 +41,13 @@ function post (state={posts:[]}, action) {
         posts: action.posts
       }
 
+    case GET_ALL_POST:
+      return {
+        ...state,
+        posts: action.posts
+      }
+
     case DELETE_POST:
-      console.log("deleted")
       const deletedposts = state.posts.map((post, index) => {
         if(post.id === action.post.id) {
           return action.post
@@ -58,6 +63,17 @@ function post (state={posts:[]}, action) {
         ...state,
         posts: state.posts.concat(action.newpost)
       }
+
+    case EDIT_POST:
+      const editedposts = state.posts.map((post, index) => {
+        if(post.id === action.post.id) {
+          return action.post
+        } else {
+          return post
+        }
+      })
+
+    return {...state, posts: editedposts}
 
     case VOTE_POST:
       const voteupdatedpost = state.posts.map((post, index) => {
@@ -86,7 +102,6 @@ function post (state={posts:[]}, action) {
 function comment (state={comments:[]}, action) {
   switch (action.type) {
     case GET_COMMENTS:
-      console.log("comment", action)
       return {
         ...state,
         comments: action.comments
@@ -103,11 +118,28 @@ function comment (state={comments:[]}, action) {
 
       return {...state, comments: voteupdatedcomments}
 
+    case DELETE_COMMENT:
+      console.log(state.comments, action.comment)
+      const deletedcomments = state.comments.map((c, index) => {
+        if(c.id === action.comment.id) {
+          return action.comment
+        } else {
+          return comment
+        }
+      })
+
+      return {...state, comments: deletedcomments}
+
+    case CREATE_COMMENT:
+      return {
+        ...state,
+        comments: state.comments.concat(action.comment)
+      }
+
     default:
       return state
 
   }
-  const { comment } = action
 }
 
 export default combineReducers({

@@ -1,10 +1,13 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Route, Link, withRouter } from 'react-router-dom'
+import { Link, withRouter } from 'react-router-dom'
 import PropTypes from 'prop-types'
+import Modal from 'react-modal'
+
 import { formatTimestamp } from '../utils/helpers'
 import CommentList from './CommentList'
 import AddComment from './AddComment'
+import AddPost from './AddPost'
 import {
   deletePostAction,
   votePostAction,
@@ -15,6 +18,10 @@ import {
 class PostDetails extends Component {
   static propType =  {
     category: PropTypes.string.isRequired,
+  }
+
+  state = {
+      editPostModalOpen: false,
   }
 
   componentDidMount() {
@@ -37,6 +44,25 @@ class PostDetails extends Component {
     this.props.votePostAction(post_id, upordown)
   }
 
+
+
+  openEditPostModal= () => {
+    this.setState(() => ({
+      editPostModalOpen: true,
+    }))
+  }
+  closeEditPostModal = () => {
+    this.setState(() => ({
+      editPostModalOpen: false,
+    }))
+  }
+
+  edit = (e) => {
+    e.preventDefault()
+
+    this.openEditPostModal()
+
+  }
 
   render() {
     const {post, categories} = this.props
@@ -69,7 +95,7 @@ class PostDetails extends Component {
         </div>
 
         <div className="edit">
-          <button>edit</button>
+          <button onClick={(e) => this.edit(e)}>edit</button>
           <button onClick={(e) => this.delete(e)}>delete</button>
         </div>
 
@@ -77,7 +103,19 @@ class PostDetails extends Component {
 
         <CommentList comments={this.props.comments} />
 
-        <AddComment />
+        <AddComment postId={this.props.match.params.post_id} />
+
+          <Modal
+            className='modal'
+            overlayClassName='overlay'
+            isOpen={this.state.editPostModalOpen}
+            onRequestClose={this.closeEditPostModal}
+            contentLabel='Modal'
+          >
+            <div>
+              <AddPost categories={this.props.categories} closeModal={this.closeEditPostModal} editpost={this.props.post}/>
+            </div>
+          </Modal>
 
       </div>
     )
@@ -89,7 +127,7 @@ function mapStateToProps(state, props) {
     categories: state.category.categories,
     posts: state.post.posts,
     post: state.post.posts.filter( (p) => p.id === props.match.params.post_id)[0],
-    comments: state.comment.comments
+    comments: state.comment.comments.filter( (c) => !c.deleted ),
   }
 }
 

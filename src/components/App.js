@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import { Route, Link, withRouter } from 'react-router-dom'
+import { Route, withRouter } from 'react-router-dom'
 import Modal from 'react-modal'
-
-import { getCategories, getAllPosts } from '../utils/api'
 import { orderByScore, orderByTime } from '../utils/helpers'
-import { addCategoriesAction, addPostsAction } from '../actions'
+import { addPostsAction, getCategoriesAction, getAllPosts } from '../actions'
 
 import PostList from './PostList'
 import Header from './Header'
@@ -31,16 +29,12 @@ class App extends Component {
   }
 
   componentDidMount() {
-    const { addCategories, addPosts } = this.props
+    this.props.getCategoriesAction()
+    this.props.getAllPosts()
 
-    getCategories().then((categories) => {
-      addCategories(categories)
-    })
 
-    getAllPosts().then((posts) => {
-      orderByScore(posts)
-      addPosts(posts)
-    })
+    orderByScore(this.props.posts)
+
   }
 
   setOrderbyTimestamp = () => {
@@ -109,7 +103,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    addCategories: (data) => dispatch(addCategoriesAction(data)),
+    getCategoriesAction: () => dispatch(getCategoriesAction()),
+    getAllPosts: () => dispatch(getAllPosts()),
     addPosts: (data) => dispatch(addPostsAction(data)),
   }
 }

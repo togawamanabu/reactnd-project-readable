@@ -1,11 +1,13 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Route, Link, withRouter } from 'react-router-dom'
+import {  withRouter } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { formatTimestamp } from '../utils/helpers'
 
 import {
-  voteCommentAction
+  voteCommentAction,
+  deleteCommentAction,
+
  } from '../actions'
 
 class CommentList extends Component {
@@ -18,6 +20,11 @@ class CommentList extends Component {
     this.props.voteCommentAction(comment_id, upordown)
   }
 
+  delete = (e, comment_id) => {
+    e.preventDefault()
+    this.props.deleteCommentAction(comment_id)
+  }
+
 
   render() {
     let comments = this.props.comments.map( (comment) => (
@@ -27,7 +34,11 @@ class CommentList extends Component {
           <button onClick={(e) => this.vote(e, "upVote", comment.id) }>+1</button>
           <button onClick={(e) => this.vote(e, "downVote", comment.id)}>-1</button>
           </div>
-        <div className="edit"><button>edit</button><button>delete</button></div>
+        <div className="edit">
+          <button>edit</button>
+          <button onClick={(e) => this.delete(e, comment.id)}>delete</button>
+
+          </div>
       </li>
     ))
 
@@ -47,7 +58,9 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    voteCommentAction: (post_id, upordown) => dispatch(voteCommentAction(post_id, upordown)),
+    voteCommentAction: (comment_id, upordown) => dispatch(voteCommentAction(comment_id, upordown)),
+    deleteCommentAction: (comment_id)  => dispatch(deleteCommentAction(comment_id)),
+
   }
 }
 

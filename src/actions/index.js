@@ -1,3 +1,5 @@
+import uuidv4 from 'uuid/v4';
+
 export const ADD_CATEGORIES = 'ADD_CATEGORIES'
 export const ADD_POSTS = 'ADD_POSTS'
 export const DELETE_POST = 'DELETE_POST'
@@ -8,28 +10,47 @@ export const CREATE_COMMENT = 'CREATE_COMMENT'
 export const VOTE_COMMENT = 'VOTE_COMMENT'
 export const DELETE_COMMENT = 'DELETE_COMMENT'
 export const GET_COMMENTS = 'GET_COMMENTS'
+export const GET_ALL_POST = 'GET_ALL_POST'
+export const EDIT_POST = 'EDIT_POST'
 
 const API = 'http://localhost:3001'
 
 export function getPostAction(post_id) {
-  fetch(`${API}/posts/${post_id}` ,{ headers: { 'Authorization': 'whatever-you-want' } })
-  .then((res) => {
-        return ( {
+  return dispatch => {fetch(`${API}/posts/${post_id}` ,{ headers: { 'Authorization': 'whatever-you-want' } })
+  .then((res) => res.json())
+     .then(data => {
+      dispatch({
           type: GET_POST,
           post_id: post_id,
-          data: res.json(),
+          data: data,
         })
-  })
-}
-
-export function addCategoriesAction ({categories}) {
-  return {
-    type: ADD_CATEGORIES,
-    categories,
+    })
   }
 }
 
+export function getCategoriesAction() {
+  return dispatch => {fetch(`${API}/categories`,{ headers: { 'Authorization': 'whatever-you-want' } })
+  .then((res) => res.json())
+     .then(data => {
+      dispatch({
+        type: ADD_CATEGORIES,
+        data,
+      })
+    })
+  }
+}
 
+export function getAllPosts() {
+  return dispatch => {fetch(`${API}/posts`,{ headers: { 'Authorization': 'whatever-you-want' } })
+  .then((res) => res.json())
+     .then(data => {
+      dispatch({
+        type: GET_ALL_POST,
+        posts: data,
+      })
+    })
+  }
+}
 
 export function addPostsAction(posts) {
   return {
@@ -53,10 +74,51 @@ export function deletePostAction(post_id) {
   }
 }
 
-export function createPostAction(newpost) {
-  return {
-    type: CREATE_POST,
-    newpost,
+export function createPostAction(title, body, author, category) {
+  const timestamp = (new Date()).getTime()
+
+  var payload = {
+    id: uuidv4(),
+    title: title,
+    timestamp: timestamp,
+    body: body,
+    author: author,
+    category: category,
+  }
+
+  return dispatch => {
+     fetch(`${API}/posts`, {
+       method: 'POST',
+       headers: { 'Authorization': 'whatever-you-want', "Content-Type": "application/json" },
+       body: JSON.stringify(payload)
+     }).then((res) => res.json())
+      .then(data => {
+       dispatch({
+         type: CREATE_POST,
+         newpost: data,
+       })
+     })
+  }
+}
+
+export function editPostAction(post_id, title, body) {  
+  var payload = {
+    title: title,
+    body: body,
+  }
+
+  return dispatch => {
+     fetch(`${API}/posts/${post_id}`, {
+       method: 'PUT',
+       headers: { 'Authorization': 'whatever-you-want', "Content-Type": "application/json" },
+       body: JSON.stringify(payload)
+     }).then((res) => res.json())
+      .then(data => {
+       dispatch({
+         type: EDIT_POST,
+         post: data,
+       })
+     })
   }
 }
 
@@ -91,17 +153,7 @@ export function getPostCommentAction(post_id) {
     }
 }
 
-export function createCommentAction(post_id, name, comment) {
-  return {
-    type: CREATE_COMMENT,
-    post_id,
-    name,
-    comment
-  }
-}
-
 export function voteCommentAction(comment_id, upordown) {
-  console.log("vote", `${API}/comments/${comment_id}`, upordown)
   return dispatch => {
      fetch(`${API}/comments/${comment_id}`, {
        method: 'POST',
@@ -118,8 +170,42 @@ export function voteCommentAction(comment_id, upordown) {
 }
 
 export function deleteCommentAction(comment_id) {
-  return {
-    type: DELETE_COMMENT,
-    comment_id
+  return dispatch => {
+     fetch(`${API}/comments/${comment_id}`, {
+       method: 'DELETE',
+       headers: { 'Authorization': 'whatever-you-want', "Content-Type": "application/json" },
+     }).then((res) => res.json())
+      .then(data => {
+       dispatch({
+         type: DELETE_COMMENT,
+         comment: data,
+       })
+     })
+  }
+}
+
+export function createCommentAction(post_id, body, author) {
+  const timestamp = (new Date()).getTime()
+
+  var payload = {
+    id: uuidv4(),
+    timestamp: timestamp,
+    body: body,
+    author: author,
+    parentId: post_id,
+  }
+
+  return dispatch => {
+     fetch(`${API}/comments`, {
+       method: 'POST',
+       headers: { 'Authorization': 'whatever-you-want', "Content-Type": "application/json" },
+       body: JSON.stringify(payload)
+     }).then((res) => res.json())
+      .then(data => {
+       dispatch({
+         type: CREATE_COMMENT,
+         comment: data,
+       })
+     })
   }
 }
