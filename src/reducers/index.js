@@ -13,6 +13,7 @@ import {
   GET_COMMENTS,
   GET_ALL_POST,
   EDIT_POST,
+  EDIT_COMMENT,
   } from '../actions'
 
 function category (state = {categories:[]}, action) {
@@ -119,12 +120,11 @@ function comment (state={comments:[]}, action) {
       return {...state, comments: voteupdatedcomments}
 
     case DELETE_COMMENT:
-      console.log(state.comments, action.comment)
       const deletedcomments = state.comments.map((c, index) => {
         if(c.id === action.comment.id) {
           return action.comment
         } else {
-          return comment
+          return c
         }
       })
 
@@ -136,6 +136,16 @@ function comment (state={comments:[]}, action) {
         comments: state.comments.concat(action.comment)
       }
 
+    case EDIT_COMMENT:
+      const editupdatedcomments = state.comments.map((comment, index) => {
+        if(comment.id === action.comment.id) {
+          return action.comment
+        } else {
+          return comment
+        }
+      })
+
+      return {...state, comments: editupdatedcomments}
     default:
       return state
 

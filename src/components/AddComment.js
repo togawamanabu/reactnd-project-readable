@@ -2,11 +2,22 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import { createCommentAction } from '../actions'
+import { createCommentAction, editCommentAction } from '../actions'
 
 class AddComment extends Component {
   static propType =  {
     postId: PropTypes.string.isRequired,
+    closeModal: PropTypes.func,
+    editcomment: PropTypes.object,
+  }
+
+  componentDidMount() {
+    const {refs} = this
+    const {editcomment} = this.props
+
+    if(editcomment) {
+      refs.body.value = editcomment.body
+    }
   }
 
   createcomment = (e) => {
@@ -14,18 +25,25 @@ class AddComment extends Component {
 
     e.preventDefault()
 
-    this.props.createCommentAction(this.props.postId, refs.body.value, refs.author.value)
+    if(this.props.editcomment) {
+      this.props.editCommentAction(this.props.editcomment.id, refs.body.value)
+      this.props.closeModal()
+
+    } else {
+      this.props.createCommentAction(this.props.postId, refs.body.value, refs.author.value)
+      refs.author.value = ""
+    }
 
     refs.body.value = ""
-    refs.author.value = ""
   }
 
   render() {
+    const nametag = <p>name:<input type="text" name="name" ref="author"/></p>
     return (
       <div>
       <form onSubmit={this.createcomment}>
-        name:<input type="text" name="name" ref="author"/>
-        comment:<input type="textarea" name="comment" ref="body" />
+      {this.props.editcomment?'':nametag}
+      <p>comment:<input type="textarea" name="comment" ref="body" /></p>
         <button type="submit">submit</button>
       </form>
       </div>
@@ -41,6 +59,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
       createCommentAction: (post_id, body, author) => dispatch(createCommentAction(post_id, body, author)),
+      editCommentAction: (comment_id, body) => dispatch(editCommentAction(comment_id, body)),
     }
 }
 

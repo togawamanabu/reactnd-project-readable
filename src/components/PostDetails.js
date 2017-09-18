@@ -44,8 +44,6 @@ class PostDetails extends Component {
     this.props.votePostAction(post_id, upordown)
   }
 
-
-
   openEditPostModal= () => {
     this.setState(() => ({
       editPostModalOpen: true,
@@ -57,7 +55,7 @@ class PostDetails extends Component {
     }))
   }
 
-  edit = (e) => {
+  editPost = (e) => {
     e.preventDefault()
 
     this.openEditPostModal()
@@ -95,7 +93,7 @@ class PostDetails extends Component {
         </div>
 
         <div className="edit">
-          <button onClick={(e) => this.edit(e)}>edit</button>
+          <button onClick={(e) => this.editPost(e)}>edit</button>
           <button onClick={(e) => this.delete(e)}>delete</button>
         </div>
 
@@ -105,17 +103,17 @@ class PostDetails extends Component {
 
         <AddComment postId={this.props.match.params.post_id} />
 
-          <Modal
-            className='modal'
-            overlayClassName='overlay'
-            isOpen={this.state.editPostModalOpen}
-            onRequestClose={this.closeEditPostModal}
-            contentLabel='Modal'
-          >
-            <div>
-              <AddPost categories={this.props.categories} closeModal={this.closeEditPostModal} editpost={this.props.post}/>
-            </div>
-          </Modal>
+        <Modal
+          className='modal'
+          overlayClassName='overlay'
+          isOpen={this.state.editPostModalOpen}
+          onRequestClose={this.closeEditPostModal}
+          contentLabel='Modal'
+        >
+          <div>
+            <AddPost categories={this.props.categories} closeModal={this.closeEditPostModal} editpost={this.props.post}/>
+          </div>
+        </Modal>
 
       </div>
     )

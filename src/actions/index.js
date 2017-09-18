@@ -12,6 +12,7 @@ export const DELETE_COMMENT = 'DELETE_COMMENT'
 export const GET_COMMENTS = 'GET_COMMENTS'
 export const GET_ALL_POST = 'GET_ALL_POST'
 export const EDIT_POST = 'EDIT_POST'
+export const EDIT_COMMENT = 'EDIT_COMMENT'
 
 const API = 'http://localhost:3001'
 
@@ -101,7 +102,7 @@ export function createPostAction(title, body, author, category) {
   }
 }
 
-export function editPostAction(post_id, title, body) {  
+export function editPostAction(post_id, title, body) {
   var payload = {
     title: title,
     body: body,
@@ -204,6 +205,29 @@ export function createCommentAction(post_id, body, author) {
       .then(data => {
        dispatch({
          type: CREATE_COMMENT,
+         comment: data,
+       })
+     })
+  }
+}
+
+export function editCommentAction(comment_id, body) {  
+  const timestamp = (new Date()).getTime()
+
+  var payload = {
+    timestamp: timestamp,
+    body: body,
+  }
+
+  return dispatch => {
+     fetch(`${API}/comments/${comment_id}`, {
+       method: 'PUT',
+       headers: { 'Authorization': 'whatever-you-want', "Content-Type": "application/json" },
+       body: JSON.stringify(payload)
+     }).then((res) => res.json())
+      .then(data => {
+       dispatch({
+         type: EDIT_COMMENT,
          comment: data,
        })
      })

@@ -3,6 +3,8 @@ import { connect } from 'react-redux'
 import {  withRouter } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { formatTimestamp } from '../utils/helpers'
+import Modal from 'react-modal'
+import AddComment from './AddComment'
 
 import {
   voteCommentAction,
@@ -15,6 +17,11 @@ class CommentList extends Component {
     comments: PropTypes.array.isRequired
   }
 
+  state = {
+      editCommentModalOpen: false,
+      editComment: null,
+  }
+
   vote = (e, upordown, comment_id) => {
     e.preventDefault()
     this.props.voteCommentAction(comment_id, upordown)
@@ -24,6 +31,30 @@ class CommentList extends Component {
     e.preventDefault()
     this.props.deleteCommentAction(comment_id)
   }
+
+  editComment = (e, comment) => {
+    e.preventDefault()
+
+    this.setState({editcomment: comment})
+
+    this.openEditCommentModal()
+  }
+
+
+  openEditCommentModal= () => {
+    this.setState(() => ({
+      editCommentModalOpen: true,
+    }))
+  }
+
+  closeEditCommentModal = () => {
+    this.setState(() => ({
+      editCommentModalOpen: false,
+    }))
+  }
+
+
+
 
 
   render() {
@@ -35,7 +66,7 @@ class CommentList extends Component {
           <button onClick={(e) => this.vote(e, "downVote", comment.id)}>-1</button>
           </div>
         <div className="edit">
-          <button>edit</button>
+          <button onClick={(e) => this.editComment(e, comment)}>edit</button>
           <button onClick={(e) => this.delete(e, comment.id)}>delete</button>
 
           </div>
@@ -43,10 +74,26 @@ class CommentList extends Component {
     ))
 
     return (
-      <ul>
-        { comments }
+      <div>
+        <ul>
+          { comments }
 
-      </ul>
+        </ul>
+        <Modal
+          className='modal'
+          overlayClassName='overlay'
+          isOpen={this.state.editCommentModalOpen}
+          onRequestClose={this.closeEditCommentModal}
+          contentLabel='Modal'
+        >
+          <div>
+            <AddComment
+              postId={this.props.match.params.post_id}
+              editcomment={this.state.editcomment}
+              closeModal={this.closeEditCommentModal} />
+          </div>
+        </Modal>
+      </div>
     )
   }
 }
