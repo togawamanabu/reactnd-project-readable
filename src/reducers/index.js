@@ -14,6 +14,7 @@ import {
   GET_ALL_POST,
   EDIT_POST,
   EDIT_COMMENT,
+  GET_CATEGORY_POST,
   } from '../actions'
 
 function category (state = {categories:[]}, action) {
@@ -29,7 +30,7 @@ function category (state = {categories:[]}, action) {
   }
 }
 
-function post (state={posts:[]}, action) {
+function post (state={posts:[]}, action) {  
   switch (action.type) {
     case GET_POST:
       return {
@@ -43,6 +44,12 @@ function post (state={posts:[]}, action) {
       }
 
     case GET_ALL_POST:
+      return {
+        ...state,
+        posts: action.posts
+      }
+
+    case GET_CATEGORY_POST:
       return {
         ...state,
         posts: action.posts
@@ -107,6 +114,8 @@ function comment (state={comments:[]}, action) {
         ...state,
         comments: action.comments
       }
+
+
 
     case VOTE_COMMENT:
       const voteupdatedcomments = state.comments.map((comment, index) => {

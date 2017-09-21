@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { Route, withRouter } from 'react-router-dom'
-import Modal from 'react-modal'
 import { orderByScore, orderByTime } from '../utils/helpers'
-import { addPostsAction, getCategoriesAction, getAllPosts } from '../actions'
+import { addPostsAction, getCategoriesAction, getAllPostsAction } from '../actions'
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import ContentAdd from 'material-ui/svg-icons/content/add';
+import Dialog from 'material-ui/Dialog';
 
 import PostList from './PostList'
 import Header from './Header'
@@ -30,8 +32,7 @@ class App extends Component {
 
   componentDidMount() {
     this.props.getCategoriesAction()
-    this.props.getAllPosts()
-
+    //this.props.getAllPosts()
 
     orderByScore(this.props.posts)
 
@@ -57,38 +58,37 @@ class App extends Component {
             <Header categories={categories} setOrderbyScore={this.setOrderbyScore} setOrderbyTimestamp={this.setOrderbyTimestamp} />
 
             <div className="posts">
-              <PostList posts={posts} />
+              <PostList />
             </div>
 
             <div className="addpost">
-              <button onClick={() => this.openNewPostModal()}>Add Post</button>
+              <FloatingActionButton onClick={() => this.openNewPostModal()} style={{margin:20}} >
+                <ContentAdd />
+              </FloatingActionButton>
             </div>
           </div>
         )} />
 
       <Route path="/:category/:post_id" component={PostDetails} />
 
-        <Route exact path="/:category" render={({match}) => (
-          <div>
-            <Header match={match} categories={categories} setOrderbyScore={this.setOrderbyScore} setOrderbyTimestamp={this.setOrderbyTimestamp} />
-            <p>Category : {match.params.category}</p>
-            <div className="posts">
-              <PostList posts={posts} category={match.params.category} />
-            </div>
-          </div>
-        )} />
+      <Route exact path="/:category" render={({match}) => (
+        <div>
+          <Header match={match} categories={categories} setOrderbyScore={this.setOrderbyScore} setOrderbyTimestamp={this.setOrderbyTimestamp} />
+          <p>Category : {match.params.category}</p>
+          <PostList />
+        </div>
+      )} />
 
-        <Modal
-          className='modal'
-          overlayClassName='overlay'
-          isOpen={this.state.newPostModalOpen}
+        <Dialog
+          title="Create new Post"
+          modal={false}
+          open={this.state.newPostModalOpen}
           onRequestClose={this.closeNewPostModal}
-          contentLabel='Modal'
         >
           <div>
             <AddPost categories={categories} closeModal={this.closeNewPostModal}/>
           </div>
-        </Modal>
+        </Dialog>
       </div>
     );
   }
@@ -104,7 +104,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     getCategoriesAction: () => dispatch(getCategoriesAction()),
-    getAllPosts: () => dispatch(getAllPosts()),
+    getAllPostsAction: () => dispatch(getAllPostsAction()),
     addPosts: (data) => dispatch(addPostsAction(data)),
   }
 }

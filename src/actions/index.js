@@ -2,6 +2,7 @@ import uuidv4 from 'uuid/v4';
 
 export const ADD_CATEGORIES = 'ADD_CATEGORIES'
 export const ADD_POSTS = 'ADD_POSTS'
+export const GET_CATEGORY_POST = 'GET_CATEGORY_POST'
 export const DELETE_POST = 'DELETE_POST'
 export const CREATE_POST = 'CREATE_POST'
 export const GET_POST = 'GET_POST'
@@ -41,10 +42,11 @@ export function getCategoriesAction() {
   }
 }
 
-export function getAllPosts() {
+export function getAllPostsAction() {
   return dispatch => {fetch(`${API}/posts`,{ headers: { 'Authorization': 'whatever-you-want' } })
   .then((res) => res.json())
      .then(data => {
+       console.log("return")
       dispatch({
         type: GET_ALL_POST,
         posts: data,
@@ -52,6 +54,19 @@ export function getAllPosts() {
     })
   }
 }
+
+export function getCategoryPosts(category) {
+  return dispatch => {fetch(`${API}/${category}/posts`,{ headers: { 'Authorization': 'whatever-you-want' } })
+  .then((res) => res.json())
+     .then(data => {
+      dispatch({
+        type: GET_CATEGORY_POST,
+        posts: data,
+      })
+    })
+  }
+}
+
 
 export function addPostsAction(posts) {
   return {
@@ -140,7 +155,6 @@ export function votePostAction(post_id, upordown) {
 }
 
 export function getPostCommentAction(post_id) {
-  console.log("get post comments" , post_id)
   return dispatch => {
     fetch(`${API}/posts/${post_id}/comments` ,{ headers: { 'Authorization': 'whatever-you-want' } })
       .then((res) => res.json())
@@ -211,7 +225,7 @@ export function createCommentAction(post_id, body, author) {
   }
 }
 
-export function editCommentAction(comment_id, body) {  
+export function editCommentAction(comment_id, body) {
   const timestamp = (new Date()).getTime()
 
   var payload = {
