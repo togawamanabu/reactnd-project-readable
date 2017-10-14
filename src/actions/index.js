@@ -1,23 +1,28 @@
-import uuidv4 from 'uuid/v4';
+import uuidv4 from 'uuid/v4'
+import {
+  GET_POST,
+  ADD_CATEGORIES,
+  GET_ALL_POST,
+  GET_CATEGORY_POST,
+  ADD_POSTS,
+  DELETE_POST,
+  CREATE_POST,
+  EDIT_POST,
+  VOTE_POST,
+  GET_COMMENTS,
+  VOTE_COMMENT,
+  DELETE_COMMENT,
+  CREATE_COMMENT,
+  EDIT_COMMENT,
+  ORDER_POSTS_VOTE,
+  ORDER_POSTS_DATE
+} from './types'
 
-export const ADD_CATEGORIES = 'ADD_CATEGORIES'
-export const ADD_POSTS = 'ADD_POSTS'
-export const GET_CATEGORY_POST = 'GET_CATEGORY_POST'
-export const DELETE_POST = 'DELETE_POST'
-export const CREATE_POST = 'CREATE_POST'
-export const GET_POST = 'GET_POST'
-export const VOTE_POST = 'VOTE_POST'
-export const CREATE_COMMENT = 'CREATE_COMMENT'
-export const VOTE_COMMENT = 'VOTE_COMMENT'
-export const DELETE_COMMENT = 'DELETE_COMMENT'
-export const GET_COMMENTS = 'GET_COMMENTS'
-export const GET_ALL_POST = 'GET_ALL_POST'
-export const EDIT_POST = 'EDIT_POST'
-export const EDIT_COMMENT = 'EDIT_COMMENT'
 
 const API = 'http://localhost:3001'
 
 export function getPostAction(post_id) {
+
   return dispatch => {fetch(`${API}/posts/${post_id}` ,{ headers: { 'Authorization': 'whatever-you-want' } })
   .then((res) => res.json())
      .then(data => {
@@ -46,7 +51,6 @@ export function getAllPostsAction() {
   return dispatch => {fetch(`${API}/posts`,{ headers: { 'Authorization': 'whatever-you-want' } })
   .then((res) => res.json())
      .then(data => {
-       console.log("return")
       dispatch({
         type: GET_ALL_POST,
         posts: data,
@@ -67,6 +71,17 @@ export function getCategoryPosts(category) {
   }
 }
 
+export function orderPostDate() {
+  return {
+    type: ORDER_POSTS_DATE
+  }
+}
+
+export function orderPostVote() {
+  return {
+    type: ORDER_POSTS_VOTE
+  }
+}
 
 export function addPostsAction(posts) {
   return {

@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { createCommentAction, editCommentAction } from '../actions'
+import {Card, CardText, CardTitle} from 'material-ui/Card'
 
 class AddComment extends Component {
   static propType =  {
@@ -39,14 +40,18 @@ class AddComment extends Component {
 
   render() {
     const nametag = <p>name:<input type="text" name="name" ref="author"/></p>
+    const editcomment = this.props.editcomment?"Edit Comment":"Add Comment"
     return (
-      <div>
-      <form onSubmit={this.createcomment}>
-      {this.props.editcomment?'':nametag}
-      <p>comment:<input type="textarea" name="comment" ref="body" /></p>
-        <button type="submit">submit</button>
-      </form>
-      </div>
+      <Card>
+        <CardTitle title={editcomment}></CardTitle>
+        <CardText>
+          <form onSubmit={this.createcomment}>
+          {this.props.editcomment?'':nametag}
+          <p>comment:<input type="textarea" name="comment" ref="body" /></p>
+            <button type="submit">submit</button>
+          </form>
+        </CardText>
+      </Card>
     )
   }
 }

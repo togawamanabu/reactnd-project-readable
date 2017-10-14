@@ -5,6 +5,13 @@ import PropTypes from 'prop-types'
 import { formatTimestamp } from '../utils/helpers'
 import Modal from 'react-modal'
 import AddComment from './AddComment'
+import Chip from 'material-ui/Chip'
+import {Card, CardText, CardTitle} from 'material-ui/Card'
+import Divider from 'material-ui/Divider';
+import Badge from 'material-ui/Badge'
+import IconButton from 'material-ui/IconButton'
+import FontIcon from 'material-ui/FontIcon'
+import RaisedButton from 'material-ui/RaisedButton'
 
 import {
   voteCommentAction,
@@ -53,32 +60,50 @@ class CommentList extends Component {
     }))
   }
 
-
-
-
-
   render() {
+    var styles = {
+      card: {
+        margin: 20,
+      },
+      date: {
+        color: '#555',
+        fontSize: 7,
+        marginTop: 5
+
+      }
+    }
+
     let comments = this.props.comments.map( (comment) => (
-      <li key={comment.id}>
-        <p>{comment.body} by {comment.author} - {formatTimestamp(comment.timestamp)} ({comment.voteScore})</p>
+      <div key={comment.id}>
+        <p>{comment.body} <span style={styles.data}> by.{comment.author}</span></p>
+        <Badge badgeContent={comment.voteScore} primary={true} />
+        <div style={styles.date}>{formatTimestamp(comment.timestamp)}</div>
         <div>
-          <button onClick={(e) => this.vote(e, "upVote", comment.id) }>+1</button>
-          <button onClick={(e) => this.vote(e, "downVote", comment.id)}>-1</button>
+          <IconButton onClick={(e) => this.vote(e, "upVote", comment.id) }>
+            <FontIcon className="material-icons">thumb_up</FontIcon>
+          </IconButton>
+          <IconButton onClick={(e) => this.vote(e, "downVote", comment.id) }>
+            <FontIcon className="material-icons">thumb_down</FontIcon>
+          </IconButton>
           </div>
         <div className="edit">
-          <button onClick={(e) => this.editComment(e, comment)}>edit</button>
-          <button onClick={(e) => this.delete(e, comment.id)}>delete</button>
-
-          </div>
-      </li>
+          <RaisedButton label="Edit" onClick={(e) => this.editComment(e, comment)} primary={true}  />
+          <RaisedButton label="Delete" onClick={(e) => this.delete(e, comment.id) }  secondary={true} />
+        </div>
+        <Divider />
+      </div>
     ))
 
     return (
-      <div>
-        <ul>
-          { comments }
+      <Card style={styles.card}  zDepth={3}>
+          <CardTitle title="comments">
+            <Chip>{ this.props.comments.length }</Chip>
+          </CardTitle>
 
-        </ul>
+          <CardText>
+            { comments }
+          </CardText>
+
         <Modal
           className='modal'
           overlayClassName='overlay'
@@ -93,7 +118,7 @@ class CommentList extends Component {
               closeModal={this.closeEditCommentModal} />
           </div>
         </Modal>
-      </div>
+      </Card>
     )
   }
 }
