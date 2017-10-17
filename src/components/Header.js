@@ -15,9 +15,10 @@ export default function Header ({match, categories, setOrderbyScore, setOrderbyT
   //   </ul>
   // </div>
 
+
   let categoreis = <ToolbarGroup>
      <RaisedButton label="Home"   containerElement={<Link to="/" />} />
-     {categories.map((cat) =>  <RaisedButton label={cat.name} key={cat.path} containerElement={<Link to={cat.path} />} />)}
+     {categories.map((cat) =>  <RaisedButton label={cat.name} key={cat.path} containerElement={<Link to={`/${cat.path}`} />} />)}
      <ToolbarSeparator />
      <IconButton onClick={setOrderbyTimestamp}>
        <FontIcon color={grey50} className="material-icons">&#xE923;</FontIcon>

@@ -50,6 +50,8 @@ class PostDetails extends Component {
   render() {
     const {post} = this.props
 
+    const comments = this.props.comments[this.props.match.params.post_id]?this.props.comments[this.props.match.params.post_id]:[]
+
     if (!post)
       return <div>not found</div>
 
@@ -59,7 +61,7 @@ class PostDetails extends Component {
 
         <Post post={post}  />
 
-        <CommentList comments={this.props.comments} />
+        <CommentList comments={comments} />
 
         <AddComment postId={this.props.match.params.post_id} />
 
@@ -72,7 +74,7 @@ function mapStateToProps(state, props) {
   return {
     categories: state.category.categories,
     post: state.post.posts.filter( (p) => p.id === props.match.params.post_id)[0],
-    comments: state.comment.comments.filter( (c) => !c.deleted ),
+    comments: state.comment.comments,
   }
 }
 

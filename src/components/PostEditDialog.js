@@ -50,8 +50,6 @@ class PostEditDialog extends Component {
     const {editingPost} = nextProps
 
     if(editingPost) {
-      const {refs} = this
-
       this.setState({
         title: editingPost.title,
         body: editingPost.body,
@@ -100,7 +98,7 @@ class PostEditDialog extends Component {
     return (
       <div>
         <Dialog
-          title="Create new Post"
+          title={this.props.editingPost?'Edit Post':'Create new Post'}
           actions = {actions}
           modal={false}
           open={this.props.open}

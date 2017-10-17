@@ -7,18 +7,24 @@ import {
 } from '../actions/types'
 
 
-export function comment (state={comments:[]}, action) {
+export function comment (state={comments:{}}, action) {
   switch (action.type) {
     case GET_COMMENTS:
+
+      const newcomments = {...state.comments}
+      newcomments[action.post_id] = action.comments.filter( (c) => !c.deleted)
+
+      //{...state.comments, action.comments.filter( (c) => !c.deleted)}
+
       return {
         ...state,
-        comments: action.comments
+        comments: newcomments
       }
 
-
-
     case VOTE_COMMENT:
-      const voteupdatedcomments = state.comments.map((comment, index) => {
+      const parent_id_v = action.comment.parentId
+
+      const voteupdatedcomments = state.comments[parent_id_v].map((comment, index) => {
         if(comment.id === action.comment.id) {
           return action.comment
         } else {
@@ -26,10 +32,15 @@ export function comment (state={comments:[]}, action) {
         }
       })
 
-      return {...state, comments: voteupdatedcomments}
+      const returnvotedcomments = {...state.comments}
+      returnvotedcomments[parent_id_v] = voteupdatedcomments.filter( (c) => !c.deleted)
+
+      return {...state, comments: returnvotedcomments}
 
     case DELETE_COMMENT:
-      const deletedcomments = state.comments.map((c, index) => {
+      const parent_id_d = action.comment.parentId
+
+      const deletedcomments = state.comments[parent_id_d].map((c, index) => {
         if(c.id === action.comment.id) {
           return action.comment
         } else {
@@ -37,16 +48,22 @@ export function comment (state={comments:[]}, action) {
         }
       })
 
-      return {...state, comments: deletedcomments}
+      const returndeletedcomments = {...state.comments}
+      returndeletedcomments[parent_id_d] = deletedcomments.filter( (c) => !c.deleted)
+
+      return {...state, comments: returndeletedcomments}
 
     case CREATE_COMMENT:
+      const addedcomment = {...state.comments}
+      addedcomment[action.post_id] = addedcomment[action.post_id].concat(action.comment)
       return {
         ...state,
-        comments: state.comments.concat(action.comment)
+        comments: addedcomment
       }
 
     case EDIT_COMMENT:
-      const editupdatedcomments = state.comments.map((comment, index) => {
+      const parent_id_e = action.comment.parentId
+      const editupdatedcomments = state.comments[parent_id_e].map((comment, index) => {
         if(comment.id === action.comment.id) {
           return action.comment
         } else {
@@ -54,7 +71,10 @@ export function comment (state={comments:[]}, action) {
         }
       })
 
-      return {...state, comments: editupdatedcomments}
+      const returneditedcomments = {...state.comments}
+      returneditedcomments[parent_id_e] = editupdatedcomments.filter( (c) => !c.deleted)
+
+      return {...state, comments: returneditedcomments}
     default:
       return state
 

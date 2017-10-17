@@ -10,7 +10,7 @@ class PostList extends Component {
     editPost: PropTypes.func.isRequired,
   }
 
-  componentDidMount() {
+  componentDidUpdate() {
     var category=this.props.match.params.category
 
     if(category) {

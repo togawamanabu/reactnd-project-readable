@@ -14,7 +14,7 @@ import Chip from 'material-ui/Chip'
 import {
   votePostAction,
   deletePostAction,
-
+  getPostCommentAction,
  } from '../actions'
 
 class Post extends Component {
@@ -34,6 +34,11 @@ class Post extends Component {
 
       }
     }
+
+
+  componentDidMount() {
+    this.props.getPostCommentAction(this.props.post.id)
+  }
 
   delete = (post_id) => {
     this.props.deletePostAction(post_id)
@@ -62,22 +67,24 @@ class Post extends Component {
       }
     }
 
-    let {post} =  this.props
+    let {post,comments} =  this.props
+
+    const comments_num = comments[post.id]?comments[post.id].length:0
 
     return (
       <Card key={post.id} style={styles.card} zDepth={3}>
 
-        <Link to={`/posts/${post.id}`}>
+        <Link to={`/${post.category}/${post.id}`}>
           <CardTitle title={post.title} />
         </Link>
        <CardText>
            {post.body}
+            <Chip>{comments_num} {comments_num<2?"comments":"comment"}</Chip>
            <div style={styles.date}>
              <p>{formatTimestamp(post.timestamp)}</p>
              <p> by.{post.author}</p>
              <Chip>{post.category} </Chip>
            </div>
-
        </CardText>
        <CardActions>
          <Badge badgeContent={post.voteScore} primary={true} />
@@ -102,6 +109,7 @@ class Post extends Component {
 
   function mapStateToProps(state) {
     return {
+      comments: state.comment.comments,
     }
   }
 
@@ -109,7 +117,7 @@ class Post extends Component {
     return {
       votePostAction: (post_id, upordown) => dispatch(votePostAction(post_id, upordown)),
       deletePostAction: (post_id) => dispatch(deletePostAction(post_id)),
-
+      getPostCommentAction: (post_id) => dispatch(getPostCommentAction(post_id)),
     }
   }
 

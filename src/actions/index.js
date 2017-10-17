@@ -235,6 +235,7 @@ export function createCommentAction(post_id, body, author) {
        dispatch({
          type: CREATE_COMMENT,
          comment: data,
+         post_id: post_id,
        })
      })
   }

@@ -5,7 +5,6 @@ import PropTypes from 'prop-types'
 import { formatTimestamp } from '../utils/helpers'
 import Modal from 'react-modal'
 import AddComment from './AddComment'
-import Chip from 'material-ui/Chip'
 import {Card, CardText, CardTitle} from 'material-ui/Card'
 import Divider from 'material-ui/Divider';
 import Badge from 'material-ui/Badge'
@@ -96,9 +95,7 @@ class CommentList extends Component {
 
     return (
       <Card style={styles.card}  zDepth={3}>
-          <CardTitle title="comments">
-            <Chip>{ this.props.comments.length }</Chip>
-          </CardTitle>
+          <CardTitle title="comments" />
 
           <CardText>
             { comments }
